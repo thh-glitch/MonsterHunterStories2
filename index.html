@@ -3,16 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MHST2 全魔物猜拳與基因查找器 (究極完全版)</title>
+  <title>MHST2 全魔物究極圖鑑 (含猜拳順序、地點、蛋紋)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #121212; color: #e0e0e0; padding-bottom: 40px; }
+    
+    /* Sticky Header & Search */
     .sticky-header { position: sticky; top: 0; z-index: 100; background-color: #1a1a1a; border-bottom: 2px solid #333; padding: 12px 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.6); }
-    .search-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
+    .search-wrapper { position: relative; width: 100%; margin-bottom: 10px; padding-right: 120px;}
     .search-input { width: 100%; padding: 12px 40px 12px 14px; background-color: #262626; border: 1px solid #444; border-radius: 8px; color: #ffffff; font-size: 16px; outline: none; transition: border-color 0.2s; }
     .search-input:focus { border-color: #ffd700; }
-    .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #888; font-size: 18px; cursor: pointer; }
+    .clear-btn { position: absolute; right: 130px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #888; font-size: 18px; cursor: pointer; }
     
+    /* Egg Button */
+    .egg-btn { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, #ffaa00, #ff6a00); border: none; padding: 10px 12px; border-radius: 8px; color: #fff; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 4px;}
+    .egg-btn:active { transform: translateY(-50%) scale(0.95); }
+
+    /* Filters */
     .filter-row { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
     .filter-group { display: flex; align-items: center; gap: 6px; }
     .filter-label { font-size: 11px; color: #aaa; min-width: 95px; }
@@ -21,6 +28,7 @@
     .filter-tag { display: inline-block; padding: 5px 12px; margin-right: 6px; background-color: #2d2d2d; border: 1px solid #444; border-radius: 14px; font-size: 12px; color: #ccc; cursor: pointer; user-select: none; }
     .filter-tag.active { background-color: #ffd700; color: #121212; border-color: #ffd700; font-weight: bold; }
     
+    /* List & Cards */
     .section-title { font-size: 14px; color: #ffd700; padding: 16px 14px 8px 14px; display: flex; align-items: center; font-weight: bold; }
     .section-title::after { content: ''; flex: 1; height: 1px; background: #333; margin-left: 10px; }
     .monster-list { padding: 0 14px; }
@@ -39,29 +47,56 @@
     .pin-btn { position: absolute; right: 10px; top: 12px; background: none; border: none; font-size: 22px; color: #444; cursor: pointer; padding: 2px; line-height: 1; }
     .pin-btn.pinned { color: #ffd700; }
     
-    .pattern-row { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+    /* Location & Ride Tags */
+    .info-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .info-tag { font-size: 11px; padding: 3px 8px; background-color: #333; border-radius: 4px; color: #ddd; border: 1px solid #444;}
+    .info-tag.ride { color: #69f0ae; border-color: #2e7d32; background-color: rgba(46, 125, 50, 0.2); }
+    .info-tag.loc { color: #448aff; border-color: #1565c0; background-color: rgba(21, 101, 192, 0.2); }
+
+    .pattern-row { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 12px; }
     .pattern-box { display: inline-block; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold; color: #ffffff; }
     .pattern-power { background-color: #b71c1c; border-left: 4px solid #ff5252; }
     .pattern-speed { background-color: #0d47a1; border-left: 4px solid #448aff; }
     .pattern-tech { background-color: #1b5e20; border-left: 4px solid #69f0ae; }
+    .pattern-arrow { color: #888; font-weight: bold; }
     
     .gene-row { background-color: #262626; padding: 8px 10px; border-radius: 6px; border: 1px solid #333; }
     .gene-title { font-size: 11px; color: #aaa; margin-bottom: 3px; font-weight: bold; display: flex; align-items: center; gap: 4px; }
     .gene-content { font-size: 12px; color: #ffd700; font-family: monospace, sans-serif; line-height: 1.4; }
     
     .empty-prompt { text-align: center; color: #666; padding: 40px 20px; font-size: 14px; }
-    .update-badge { background-color: #7209b7; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 2px;}
+    
+    /* Lightbox Modal */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+    .modal-close { position: absolute; top: 20px; right: 20px; font-size: 32px; color: #fff; cursor: pointer; z-index: 2010; font-weight: bold; }
+    .img-wrapper { width: 95%; height: 80%; overflow: auto; display: flex; justify-content: center; align-items: center; }
+    .egg-image { max-width: 100%; max-height: 100%; cursor: zoom-in; transition: transform 0.3s ease; transform-origin: center; }
+    .egg-image.zoomed { transform: scale(2.5); cursor: zoom-out; max-width: none; max-height: none; }
+    .modal-hint { color: #aaa; font-size: 12px; margin-top: 15px; }
+
   </style>
 </head>
 <body>
+  <!-- Lightbox Modal -->
+  <div id="eggModal" class="modal-overlay">
+    <span class="modal-close" id="closeModal">&times;</span>
+    <div class="img-wrapper">
+      <!-- 呼叫同資料夾下的 mhst2_eggs.png -->
+      <img src="mhst2_eggs.png" alt="全魔物蛋紋" class="egg-image" id="eggImg">
+    </div>
+    <div class="modal-hint">👆 點擊圖片可放大/縮小</div>
+  </div>
+
   <div class="sticky-header">
     <div class="search-wrapper">
-      <input type="text" id="searchInput" class="search-input" placeholder="🔍 輸入魔物、基因、屬性 (例如: 迅龍、真空波)...">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜魔物、基因 Buff、地點...">
       <button id="clearSearch" class="clear-btn">❌</button>
+      <button id="openModal" class="egg-btn">🥚 蛋紋</button>
     </div>
     <div class="filter-row">
       <div class="filter-group">
-        <span class="filter-label">🎯 對手戰鬥傾向：</span>
+        <span class="filter-label">🎯 敵方猜拳：</span>
         <div class="tag-container" id="enemyFilters">
           <div class="filter-tag" data-type="enemy" data-val="力">🔴 力</div>
           <div class="filter-tag" data-type="enemy" data-val="速">🔵 速</div>
@@ -69,44 +104,200 @@
         </div>
       </div>
       <div class="filter-group">
-        <span class="filter-label">🥚 隨行獸孵出屬性：</span>
+        <span class="filter-label">🥚 隨行獸包包：</span>
         <div class="tag-container" id="ownFilters">
-          <div class="filter-tag" data-type="own" data-val="力">🔴 力型</div>
-          <div class="filter-tag" data-type="own" data-val="速">🔵 速型</div>
-          <div class="filter-tag" data-type="own" data-val="技">🟢 技型</div>
+          <div class="filter-tag" data-type="own" data-val="力">🔴 力</div>
+          <div class="filter-tag" data-type="own" data-val="速">🔵 速</div>
+          <div class="filter-tag" data-type="own" data-val="技">🟢 技</div>
           <div class="filter-tag" data-type="own" data-val="不可">⚪ 不可馱</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="favTitle" class="section-title" style="display:none;">⭐ 已釘選關鍵魔物</div>
+  <div id="favTitle" class="section-title" style="display:none;">⭐ 已釘選</div>
   <div id="favList" class="monster-list"></div>
   <div id="mainTitle" class="section-title">全魔物究極圖鑑</div>
   <div id="mainList" class="monster-list"></div>
 
   <script>
-    // 完備大數據集 (134隻)
+    // [名稱, 敵方猜拳模式, 包包屬性, 基因, 地點, 騎乘動作]
     const rawData = [
-      ["草食龍", "力", "", "力", "無屬性力基因(小/中)"], ["首鳴龍", "技", "", "技", "無屬性技基因(小/中)"], ["藍速龍", "速", "", "速", "無屬性速基因(小/中)"], ["藍速龍王", "速", "力", "速", "無屬性速基因(中)：呼喚同伴"], ["搔鳥", "技", "力", "技", "無屬性技基因(中)：岩石防禦"], ["飛甲蟲【藍】", "技", "", "不可", "-"], ["盾蟲【黃】", "技", "", "不可", "-"], ["怪鳥", "技", "", "技", "火屬性技基因(開荒中)：怪鳥火球"], ["野豬", "力", "", "不可", "-"], ["野豬王", "力", "", "力", "無屬性力基因(中)：野豬衝撞"], ["毒妖鳥", "技", "力", "技", "無屬性技基因(中)：毒液噴射"], ["背甲龍", "力", "", "力", "無屬性力基因(中)：鐵壁"], ["垂皮龍【綠】", "力", "", "不可", "-"], ["丸鳥", "速", "", "不可", "-"], ["狗龍", "速", "", "不可", "-"], ["雌狗龍", "力", "", "不可", "-"], ["狗龍王", "技", "速", "技", "無屬性技基因(中)：狗龍呼喚"], ["水生獸", "力", "", "不可", "-"], ["水獸", "力", "技", "力", "水屬性力基因(中)：水沫噴射"], ["鬼蛙", "力", "", "力", "火屬性力基因(中)：蓄力岩石"], ["青熊獸", "力", "技", "力", "無屬性力基因(中)：熊抱"], ["彩鳥", "技", "力", "技", "火屬性技基因(大)：治癒之歌"], ["青怪鳥", "技", "速", "技", "火屬性技基因(中)：連續火球"], ["轟龍", "速", "力", "速", "無屬性速基因(特大)：轟狂咆哮 / 地震衝撞"], ["一角龍", "速", "力", "速", "無屬性速基因(大)：一角死神衝撞"], ["浮空龍", "技", "速", "技", "無屬性技基因(中)：真空壓殺"], ["岩龍", "技", "力", "技", "火屬性技基因(中)：岩石氣體"], ["黑狼鳥", "技", "力", "技", "火屬性技基因(大)：倒立尾擊"], ["尾槌龍", "力", "技", "力", "無屬性力基因(大)：尾槌重擊"], ["迅龍", "速", "技", "速", "無屬性速基因(大)：迅捷強襲 / 隱形"], ["雌火龍", "速", "力", "速", "火屬性速基因(大)：毒尾擊"], ["波波", "力", "", "力", "冰屬性力基因(小/中)"], ["盾蟲【藍】", "技", "", "不可", "-"], ["飛甲蟲【綠】", "技", "", "不可", "-"], ["桃毛獸", "力", "", "不可", "-"], ["桃毛獸王", "技", "力", "力", "無屬性力基因(中)：放屁"], ["眠狗龍", "速", "", "不可", "-"], ["眠狗龍王", "速", "技", "速", "無屬性速基因(重)：催眠體液"], ["奇猿狐", "速", "技", "速", "水屬性速基因(中)：惡作劇"], ["毒怪鳥", "力", "技", "力", "無屬性力基因(中)：閃光擊"], ["冰鮫幼鯊", "技", "", "不可", "-"], ["冰鮫鯊", "技", "冰罩:速/膨脹:力", "技", "冰屬性技基因(大)：冰結晶冰罩 / 冰封吐息"], ["影蜘蛛", "技", "速", "技", "無屬性技基因(大)：影蜘蛛絲"], ["土砂龍", "速", "技", "速", "無屬性速基因(中)：泥土噴射"], ["飛雷龍", "速", "帶電:力/憤怒:技", "速", "雷屬性速基因(大)：飛雷躍擊"], ["奇怪龍", "技", "力", "技", "雷屬性技基因(大)：雷電吸附"], ["紅怪龍", "技", "速", "技", "雷屬性技基因(大)：狂暴雷電"], ["重甲蟲", "技", "速", "技", "水屬性技基因(大)：重甲衝撞"], ["白兔獸", "速", "力", "速", "冰屬性速基因(中)：滑冰重擊"], ["冰土砂龍", "力", "雪罩:技/憤怒:速", "力", "冰屬性力基因(中)：冰泥噴射"], ["蠻顎龍", "速", "力", "速", "火屬性速基因(大)：蠻顎重擊 / 噴火狀態"], ["巨獸", "力", "力", "力", "冰屬性力基因(特大)：巨獸踏壓 / 吸雪"], ["雷狼龍", "速", "帶電:技/超帶電:力", "速", "雷屬性速基因(大)：雷光蟲彈 / 超帶電狀態"], ["冰牙龍", "速", "力", "速", "冰屬性速基因(大)：冰牙強襲 / 冰捲風"], ["風漂龍", "速", "憤怒:力/空中:技", "速", "冰屬性速基因(大)：冰霜吐息 / 暴風雪"], ["垂皮龍【褐】", "力", "", "不可", "-"], ["飛甲蟲【褐】", "技", "", "不可", "-"], ["盾蟲【紅】", "技", "", "不可", "-"], ["砂龍", "力", "", "不可", "-"], ["盾蟹", "技", "", "不可", "-"], ["熔岩獸", "技", "", "不可", "-"], ["毒猛龍", "速", "", "不可", "-"], ["毒猛龍王", "速", "力", "不可", "-"], ["邊猛龍", "速", "", "不可", "-"], ["痺猛龍王", "速", "技", "不可", "-"], ["水龍", "技", "力", "技", "水屬性技基因(大)：水炮"], ["砂龍王", "速", "技", "速", "無屬性速基因(中)：麻痺沙暴"], ["白猿狐", "技", "速", "技", "火屬性技基因(中)：白猿狐火球"], ["紫毒鳥", "技", "力", "技", "無屬性技基因(中)：紫毒突襲"], ["綠迅龍", "速", "力", "速", "無屬性速基因(大)：綠迅尾擊"], ["角龍", "力", "速", "力", "無屬性力基因(大)：角龍狂奔 / 鑽地"], ["黑角龍", "力", "速", "力", "無屬性力基因(大)：黑角猛撞"], ["白一角龍", "力", "速", "力", "無屬性力基因(大)：白一角突刺"], ["紅彩鳥", "技", "速", "技", "雷屬性技基因(大)：攻擊讚歌"], ["泡狐龍", "技", "速", "技", "水屬性技基因(大)：妖泡 / 妖之舞"], ["海龍", "力", "憤怒:速/續電:技", "力", "雷屬性力基因(大)：海龍雷擊 / 放電"], ["爆鎚龍", "力", "技", "力", "火屬性力基因(大)：火藥岩滾擊"], ["大名蟹", "技", "力", "技", "水屬性技基因(中)：防禦架勢"], ["紫盾大名蟹", "技", "速", "技", "水屬性技基因(大)：鐵壁防禦"], ["黑轟龍", "力", "速", "力", "無屬性力基因(大)：黑轟大咆哮"], ["紫水獸", "力", "技", "力", "水屬性力基因(中)：毒水沫"], ["桃岩龍", "技", "力", "技", "火屬性技基因(中)：桃岩氣體"], ["鎧龍", "力", "技", "力", "火屬性力基因(大)：熱線噴射"], ["甲蟲", "技", "", "不可", "-"], ["大雷光蟲", "速", "", "不可", "-"], ["盾蟲【綠】", "技", "", "不可", "-"], ["奇面族", "技", "", "不可", "-"], ["炮甲蟲", "速", "力", "不可", "-"], ["翠水龍", "技", "速", "技", "水屬性技基因(大)：翠水暴流"], ["骸蜘蛛", "技", "速", "技", "無屬性技基因(大)：噩夢絲線"], ["綠毛獸王", "力", "技", "力", "無屬性力基因(中)：惡臭衝撞"], ["炎戈龍", "速", "鑽地:力/憤怒:技", "不可", "-"], ["黑鎧龍", "力", "技", "力", "火屬性力基因(大)：超熱線噴射"], ["白海龍", "速", "蓄電:技/憤怒:力", "速", "雷屬性速基因(大)：白海放電"], ["碎龍", "力", "速", "力", "火屬性力基因(大)：黏菌爆衝 / 爆破拳"], ["電龍", "技", "電荷:力/空中:速", "技", "雷屬性技基因(大)：雷霆重擊 / 電荷狀態"], ["斬龍", "力", "蓄熱:速/紅尾:技", "力", "火屬性力基因(大)：灼熱刃 / 爆焰刃"], ["爆鱗龍", "速", "技", "速", "火屬性速基因(大)：爆鱗轟炸 / 爆破空襲"], ["翼蛇龍", "技", "", "不可", "-"], ["大蝕龍蟲", "速", "", "不可", "-"], ["飛甲蟲【紅】", "技", "", "不可", "-"], ["巨蜂", "技", "", "不可", "-"], ["風牙龍", "速", "技", "速", "無屬性速基因(大)：風牙沙暴"], ["恐暴龍", "力", "速", "力", "龍屬性力基因(特大)：吃飽再說 / 狂暴重擊 / 恐暴噴吐"], ["獄狼龍", "力", "蓄電:速/憤怒:技", "力", "龍屬性力基因(大)：蝕龍蟲彈 / 龍炎"], ["千刃龍", "技", "速", "技", "無屬性技基因(大)：千刃空裂擊 / 裂傷"], ["火龍", "力", "速", "力", "火屬性力基因(大)：豪火球 / 烈焰踢"], ["櫻火龍", "速", "力", "速", "火屬性速基因(大)：櫻火劇毒彎刺"], ["蒼火龍", "力", "憤怒:力,空中:速,空怒:技", "力", "火屬性力基因(大)：蒼火高空踢"], ["凍戈龍", "力", "鑽地:速/憤怒:技", "不可", "-"], ["白疾風迅龍", "技", "速", "速", "無屬性速基因(特大)：真空波 / 真空烈風 / 迴避性能"], ["金雷公雷狼龍", "力", "真帶電:速", "力", "雷屬性力基因(特大)：雷狼神掌 / 金雷公狀態"], ["鏖魔角龍", "速", "力", "速", "無屬性速基因(特大)：鏖魔狂奔 / 狂暴衝撞"], ["荒鉤爪轟龍", "力", "速", "力", "無屬性力基因(特大)：荒鉤爪重擊 / 地裂掌"], ["金獅子", "力", "鬥氣:速", "力", "雷屬性力基因(特大)：等離子噴流 / 精神統一 / 歐拉歐拉"], ["紫毒姬", "技", "速", "技", "火屬性技基因(特大)：紫毒姬猛毒擊 / 劇毒女王"], ["傲屠娜", "技", "憤怒:力/雙翅:力/三翅:速", "不可", "-終局最終Boss，無法馴服-"], ["滅盡龍", "技", "長刺:力/憤怒:速", "技", "無屬性技基因(特大)：毀滅衝撞 / 滅盡碎擊 / 再生能力"], ["麒麟", "速", "技", "速", "雷屬性速基因(特大)：麒麟落雷 / 神速擊"], ["炎王龍", "速", "憤怒:力/空中:技", "力", "火屬性力基因(特大)：超新星 / 爆炎粉塵"], ["冰咒龍(共鬥)", "速", "冰結:技/空中:力", "技", "冰屬性技基因(特大)：寒冰吐息 / 冰霧防禦"], ["鋼龍", "技", "憤怒:力/空中:速", "技", "冰屬性技基因(特大)：古龍暴風雨 / 龍捲風"],
+      ["草食龍", "通常:力", "力", "無屬性力：耐震(小) / 牽絆加成", "夏口洛島", "植物探測"],
+      ["首鳴龍", "通常:技", "技", "無屬性技：體力增加(小)", "艾卡拿大陸", "植物探測"],
+      ["藍速龍", "通常:速", "速", "無屬性速：敏捷(小)", "夏口洛島", "跳躍"],
+      ["藍速龍王", "開場:速 ➡️ 憤怒:力", "速", "無屬性速：攻擊力小幅提升", "夏口洛島", "跳躍"],
+      ["搔鳥", "開場:技 ➡️ 抱石:力", "技", "無屬性技：防禦加成(中)", "夏口洛島", "巢穴探測"],
+      ["飛甲蟲【藍】", "通常:技", "不可", "麻痺耐性", "洛洛斯卡", "無"],
+      ["盾蟲【黃】", "通常:技", "不可", "防禦加成 / 雷耐性", "拉穆努", "無"],
+      ["怪鳥", "開場:技", "技", "火屬性技：火點燃(小)", "夏口洛島", "怪物探測"],
+      ["野豬", "通常:力", "不可", "無屬性力：攻擊加成小", "夏口洛島", "突進"],
+      ["野豬王", "通常:力", "力", "無屬性力：全力特質", "夏口洛島", "突進"],
+      ["毒妖鳥", "開場:技 ➡️ 憤怒:力", "技", "無屬性技：狀態異常賦予(中)", "夏口洛島", "咆哮"],
+      ["背甲龍", "通常:力", "力", "無屬性力：鐵壁基因(中)", "艾卡拿大陸", "巢穴探測"],
+      ["垂皮龍【綠】", "通常:力", "不可", "體力增加(小)", "艾卡拿大陸", "無"],
+      ["丸鳥", "通常:速", "不可", "逃跑基因", "夏口洛島", "無"],
+      ["狗龍", "通常:速", "不可", "無屬性速：敏捷(小)", "艾卡拿大陸", "無"],
+      ["雌狗龍", "通常:力", "不可", "裂傷耐性小", "艾卡拿大陸", "無"],
+      ["狗龍王", "開場:技 ➡️ 憤怒:速", "技", "無屬性技：夥伴羈絆", "艾卡拿大陸", "跳躍"],
+      ["水生獸", "通常:力", "不可", "水屬性耐性", "艾卡拿大陸", "水上移動"],
+      ["水獸", "開場:力 ➡️ 憤怒:技", "力", "水屬性力：水流增幅(中)", "艾卡拿大陸", "水上移動"],
+      ["鬼蛙", "通常:力", "力", "火屬性力：防禦加成(中)", "艾卡拿大陸", "碎岩 / 爬藤"],
+      ["青熊獸", "開場:力 ➡️ 憤怒:技", "力", "無屬性力：嗜蜂蜜特質", "艾卡拿大陸", "蜂蜜探測 / 碎岩"],
+      ["彩鳥", "開場:技 ➡️ 憤怒:力", "技", "火屬性技：治癒之歌(大)", "艾卡拿大陸", "怪物探測"],
+      ["青怪鳥", "開場:技 ➡️ 憤怒:速", "技", "火屬性技：火增幅(中)", "艾卡拿大陸", "怪物探測"],
+      ["轟龍", "開場:速 ➡️ 憤怒:力", "速", "無屬性速：無屬性攻擊增幅(特大) / 破壞王", "艾卡拿大陸", "突進 / 爬藤"],
+      ["一角龍", "開場:速 ➡️ 憤怒:力", "速", "無屬性速：一擊必殺(大)", "艾卡拿大陸", "咆哮 / 地中移動"],
+      ["浮空龍", "開場:技 ➡️ 滯空:速", "技", "無屬性技：迴避性能(中)", "艾卡拿大陸", "飛行"],
+      ["岩龍", "開場:技 ➡️ 擬態:力", "技", "火屬性技：加防禦(大)", "艾卡拿大陸", "礦石探測 / 熔岩移動"],
+      ["黑狼鳥", "開場:技 ➡️ 憤怒:力", "技", "火屬性技：會心加成(大)", "艾卡拿大陸", "飛行"],
+      ["尾槌龍", "開場:力 ➡️ 旋轉:技", "力", "無屬性力：體力增加(大)", "艾卡拿大陸", "植物探測"],
+      ["迅龍", "開場:速 ➡️ 憤怒:技", "速", "無屬性速：會心加成(大) / 隱形", "艾卡拿大陸", "隱密移動"],
+      ["雌火龍", "開場:速 ➡️ 憤怒:力", "速", "火屬性速：狀態異常賦予(大)", "艾卡拿大陸", "巢穴探測"],
+      ["波波", "通常:力", "力", "冰屬性力：寒冷耐性", "洛洛斯卡", "植物探測"],
+      ["盾蟲【藍】", "通常:技", "不可", "冰耐性 / 防禦小", "洛洛斯卡", "無"],
+      ["飛甲蟲【綠】", "通常:技", "不可", "麻痺耐性", "全區域", "無"],
+      ["桃毛獸", "通常:力", "不可", "狀態異常耐性 / 惡臭", "洛洛斯卡", "蘑菇探測"],
+      ["桃毛獸王", "開場:技 ➡️ 憤怒:力", "力", "無屬性力：惡臭賦予", "洛洛斯卡", "蘑菇探測 / 爬藤"],
+      ["眠狗龍", "通常:速", "不可", "睡眠耐性", "洛洛斯卡", "無"],
+      ["眠狗龍王", "開場:速 ➡️ 憤怒:技", "速", "無屬性速：睡眠賦予(中)", "洛洛斯卡", "跳躍"],
+      ["奇猿狐", "開場:速 ➡️ 憤怒:技", "速", "水屬性速：盲目賦予(中)", "洛洛斯卡", "爬藤"],
+      ["毒怪鳥", "開場:力 ➡️ 閃光:技", "力", "無屬性力：毒無效", "洛洛斯卡", "突進"],
+      ["冰鮫幼鯊", "通常:技", "不可", "冰增幅(小)", "洛洛斯卡", "無"],
+      ["冰鮫鯊", "開場:技 ➡️ 冰罩:速 ➡️ 膨脹:力", "技", "冰屬性技：冰罩防禦(大)", "洛洛斯卡", "水上移動 / 碎岩"],
+      ["影蜘蛛", "開場:技 ➡️ 憤怒:速", "技", "無屬性技：睡眠賦予(大)", "洛洛斯卡", "怪物探測 / 爬藤"],
+      ["土砂龍", "開場:速 ➡️ 泥纏:技", "速", "無屬性速：泥濘耐性", "洛洛斯卡", "地中移動 / 昆蟲探測"],
+      ["飛雷龍", "開場:速 ➡️ 帶電:力 ➡️ 憤怒:技", "速", "雷屬性速：雷電增幅(大)", "洛洛斯卡", "跳躍"],
+      ["奇怪龍", "開場:技 ➡️ 帶電:力", "技", "雷屬性技：吸血基因(大)", "洛洛斯卡", "咆哮"],
+      ["紅怪龍", "開場:技 ➡️ 帶電:速", "技", "雷屬性技：麻痺賦予(大)", "洛洛斯卡", "咆哮"],
+      ["重甲蟲", "開場:技 ➡️ 合體:速", "技", "水屬性技：防禦加成(大)", "洛洛斯卡", "咆哮"],
+      ["白兔獸", "開場:速 ➡️ 憤怒:力", "速", "冰屬性速：敏捷(大)", "洛洛斯卡", "蘑菇探測 / 碎岩"],
+      ["冰土砂龍", "開場:力 ➡️ 雪罩:技 ➡️ 憤怒:速", "力", "冰屬性力：冰防禦(大)", "洛洛斯卡", "地中移動 / 昆蟲探測"],
+      ["蠻顎龍", "開場:速 ➡️ 憤怒:力", "速", "火屬性速：火增幅(大)", "洛洛斯卡", "咆哮"],
+      ["巨獸", "開場:力 ➡️ 雪罩:力", "力", "冰屬性力：體力特大 (終局加血核心)", "洛洛斯卡", "咆哮 / 碎岩"],
+      ["雷狼龍", "開場:速 ➡️ 帶電:技 ➡️ 超帶電:力", "速", "雷屬性速：雷電力增幅(大)", "洛洛斯卡", "跳躍"],
+      ["冰牙龍", "開場:速 ➡️ 憤怒:力", "速", "冰屬性速：會心加成(大)", "洛洛斯卡", "碎岩 / 爬藤"],
+      ["風漂龍", "開場:速 ➡️ 憤怒:力 ➡️ 滯空:技", "速", "冰屬性速：冰增幅(大)", "洛洛斯卡", "飛行"],
+      ["垂皮龍【褐】", "通常:力", "不可", "體力增加", "拉穆努", "無"],
+      ["飛甲蟲【褐】", "通常:技", "不可", "異常耐性", "拉穆努", "無"],
+      ["盾蟲【紅】", "通常:技", "不可", "火耐性", "貝怒戈", "無"],
+      ["砂龍", "通常:力", "不可", "沙盲耐性", "拉穆努", "地中移動"],
+      ["盾蟹", "通常:技", "不可", "防禦加成", "拉穆努", "無"],
+      ["熔岩獸", "通常:技", "不可", "火增幅", "貝怒戈", "熔岩移動"],
+      ["毒猛龍", "通常:速", "不可", "毒耐性", "拉穆努", "跳躍"],
+      ["毒猛龍王", "開場:速 ➡️ 憤怒:力", "不可", "毒賦予", "拉穆努", "跳躍"],
+      ["痺猛龍", "通常:速", "不可", "麻痺耐性", "拉穆努", "跳躍"],
+      ["痺猛龍王", "開場:速 ➡️ 憤怒:技", "不可", "麻痺賦予", "拉穆努", "跳躍"],
+      ["水龍", "開場:技 ➡️ 憤怒:力", "技", "水屬性技：水增幅(大)", "拉穆努", "水上移動"],
+      ["砂龍王", "開場:速 ➡️ 憤怒:技", "速", "無屬性速：盲目賦予(大)", "拉穆努", "地中移動 / 怪物探測"],
+      ["白猿狐", "開場:技 ➡️ 憤怒:速", "技", "火屬性技：火增幅(中)", "拉穆努", "爬藤"],
+      ["紫毒鳥", "開場:技 ➡️ 閃光:力", "技", "無屬性技：劇毒賦予(中)", "拉穆努", "突進"],
+      ["綠迅龍", "開場:速 ➡️ 憤怒:力", "速", "無屬性速：會心加成(大) / 迴避(大)", "拉穆努", "隱密移動"],
+      ["角龍", "開場:力 ➡️ 憤怒:速", "力", "無屬性力：底力基因(大)", "拉穆努", "咆哮 / 地中移動"],
+      ["黑角龍", "開場:力 ➡️ 憤怒:速", "力", "無屬性力：報復特質(大)", "拉穆努", "咆哮 / 地中移動"],
+      ["白一角龍", "開場:力 ➡️ 憤怒:速", "力", "無屬性力：一擊必殺(大)", "拉穆努", "咆哮 / 地中移動"],
+      ["紅彩鳥", "開場:技 ➡️ 憤怒:速", "技", "雷屬性技：攻擊讚歌", "拉穆努", "怪物探測"],
+      ["泡狐龍", "開場:技 ➡️ 憤怒:速", "技", "水屬性技：水流增幅(大)", "拉穆努", "水上移動 / 突進"],
+      ["海龍", "開場:力 ➡️ 憤怒:速 ➡️ 蓄電:技", "力", "雷屬性力：雷電增幅(大)", "拉穆努", "水上移動 / 咆哮"],
+      ["爆鎚龍", "開場:力 ➡️ 滾動:技", "力", "火屬性力：防禦加成(大)", "貝怒戈", "礦石探測 / 熔岩移動"],
+      ["大名蟹", "開場:技 ➡️ 憤怒:力", "技", "水屬性技：守護基因(大)", "拉穆努", "地中移動"],
+      ["紫盾大名蟹", "開場:技 ➡️ 憤怒:速", "技", "水屬性技：鐵壁防禦(大)", "拉穆努", "地中移動"],
+      ["黑轟龍", "開場:力 ➡️ 憤怒:速", "力", "無屬性力：正面對決(大)", "貝怒戈", "突進 / 爬藤"],
+      ["紫水獸", "開場:力 ➡️ 憤怒:技", "力", "水屬性力：毒賦予(大)", "拉穆努", "水上移動"],
+      ["桃岩龍", "開場:技 ➡️ 擬態:力", "技", "火屬性技：防禦加成(中)", "拉穆努", "礦石探測 / 熔岩移動"],
+      ["鎧龍", "開場:力 ➡️ 憤怒:技", "力", "火屬性力：耐熱特大", "貝怒戈", "礦石探測 / 熔岩移動"],
+      ["甲蟲", "通常:技", "不可", "防禦小", "貝怒戈", "無"],
+      ["大雷光蟲", "通常:速", "不可", "雷增幅", "拉穆努", "無"],
+      ["盾蟲【綠】", "通常:技", "不可", "水耐性", "洛洛斯卡", "無"],
+      ["奇面族", "通常:技", "不可", "爆彈特質", "貝怒戈", "無"],
+      ["炮甲蟲", "開場:速 ➡️ 合體:力", "不可", "大防禦", "拉穆努", "無"],
+      ["翠水龍", "開場:技 ➡️ 憤怒:速", "技", "水屬性技：水增幅(大)", "拉穆努", "水上移動"],
+      ["骸蜘蛛", "開場:技 ➡️ 憤怒:速", "技", "無屬性技：狀態異常賦予(大)", "貝怒戈", "怪物探測 / 爬藤"],
+      ["綠毛獸王", "開場:力 ➡️ 憤怒:技", "力", "無屬性力：惡臭賦予(大)", "貝怒戈", "蘑菇探測 / 爬藤"],
+      ["炎戈龍", "開場:速 ➡️ 鑽地:力 ➡️ 憤怒:技", "不可", "火增幅大", "貝怒戈", "熔岩移動"],
+      ["黑鎧龍", "開場:力 ➡️ 憤怒:技", "力", "火屬性力：防禦加成(大)", "貝怒戈", "礦石探測 / 熔岩移動"],
+      ["白海龍", "開場:速 ➡️ 蓄電:技 ➡️ 憤怒:力", "速", "雷屬性速：雷電增幅(大)", "貝怒戈", "水上移動 / 咆哮"],
+      ["碎龍", "開場:力 ➡️ 憤怒:速", "力", "火屬性力：爆破特大 (終局爆破核心)", "貝怒戈", "咆哮"],
+      ["電龍", "開場:技 ➡️ 電荷:力 ➡️ 飛空:速", "技", "雷屬性技：會心加成(大)", "貝怒戈", "飛行"],
+      ["斬龍", "開場:力 ➡️ 蓄熱:速 ➡️ 紅尾:技", "力", "火屬性力：火增幅(大)", "貝怒戈", "怪物探測"],
+      ["爆鱗龍", "開場:速 ➡️ 憤怒:技", "速", "火屬性速：爆破增幅(大)", "貝怒戈", "飛行"],
+      ["翼蛇龍", "通常:技", "不可", "毒耐性", "古地龍巢", "無"],
+      ["大蝕龍蟲", "通常:速", "不可", "龍增幅", "古地龍巢", "無"],
+      ["飛甲蟲【紅】", "通常:技", "不可", "火耐性", "貝怒戈", "無"],
+      ["巨蜂", "通常:技", "不可", "麻痺耐性", "貝怒戈", "無"],
+      ["風牙龍", "開場:速 ➡️ 憤怒:技", "速", "無屬性速：敏捷(大)", "拉穆努", "碎岩 / 爬藤"],
+      ["恐暴龍", "開場:力 ➡️ 憤怒:速", "力", "龍屬性力：暴食特大(吸血核心)", "貝怒戈", "咆哮 / 碎岩"],
+      ["獄狼龍", "開場:力 ➡️ 蓄電:速 ➡️ 憤怒:技", "力", "龍屬性力：會心加成(大)", "貝怒戈", "跳躍"],
+      ["千刃龍", "開場:技 ➡️ 憤怒:速", "技", "無屬性技：裂傷賦予(特大)", "拉穆努", "飛行"],
+      ["火龍", "開場:力 ➡️ 滯空:速", "力", "火屬性力：火增幅(大)", "夏口洛島", "飛行"],
+      ["櫻火龍", "開場:速 ➡️ 憤怒:力", "速", "火屬性速：狀態異常賦予(大)", "拉穆努", "巢穴探測"],
+      ["蒼火龍", "開場:力 ➡️ 憤怒:力 ➡️ 滯空:速", "力", "火屬性力：火增幅(大)", "貝怒戈", "飛行"],
+      ["凍戈龍", "開場:力 ➡️ 鑽地:速 ➡️ 憤怒:技", "不可", "冰防禦大", "洛洛斯卡", "無"],
+      ["白疾風迅龍", "開場:技 ➡️ 憤怒:速", "速", "無屬性速：會心特大 / 迴避特大", "夏口洛島 (超稀有)", "隱密移動"],
+      ["金雷公雷狼龍", "開場:力 ➡️ 真帶電:速", "力", "雷屬性力：雷電特大 (至高雷增幅)", "洛洛斯卡 (超稀有)", "跳躍"],
+      ["鏖魔角龍", "開場:速 ➡️ 憤怒:力", "速", "無屬性速：底力特大", "拉穆努 (超稀有)", "咆哮 / 地中移動"],
+      ["荒鉤爪轟龍", "開場:力 ➡️ 憤怒:速", "力", "無屬性力：破壞王(特大)", "艾卡拿大陸 (超稀有)", "突進 / 爬藤"],
+      ["金獅子", "開場:力 ➡️ 鬥氣:速", "力", "雷屬性力：鬥氣特大", "拉穆努 (超稀有)", "碎岩 / 跳躍"],
+      ["紫毒姬", "開場:技 ➡️ 憤怒:速", "技", "火屬性技：異常特大 (異常流核心)", "貝怒戈 (超稀有)", "巢穴探測"],
+      ["傲屠娜", "開場:技 ➡️ 雙翅:力 ➡️ 三翅:速", "不可", "- 終局最終Boss -", "龍之據點", "無"],
+      ["滅盡龍", "開場:技 ➡️ 白刺:力 ➡️ 憤怒:速", "技", "無屬性技：再生特大 (每回合回血)", "貝怒戈 (超稀有)", "咆哮 / 碎岩"],
+      ["麒麟", "開場:速 ➡️ 憤怒:技", "速", "雷屬性速：敏捷特大", "艾卡拿大陸 (超稀有)", "跳躍"],
+      ["炎王龍", "開場:速 ➡️ 憤怒:力 ➡️ 滯空:技", "力", "火屬性力：火點燃特大", "貝怒戈 (超稀有)", "熔岩移動 / 咆哮"],
+      ["冰咒龍", "開場:速 ➡️ 冰罩:技 ➡️ 浮空:力", "技", "冰屬性技：冰增幅特大 (至高冰增幅)", "洛洛斯卡 (超稀有)", "飛行"],
+      ["鋼龍", "開場:技 ➡️ 憤怒:力 ➡️ 滯空:速", "技", "冰屬性技：全屬性防禦(特大)", "艾卡拿大陸 (超稀有)", "飛行"],
       
-      // 更新追加魔物
-      ["金火龍", "速", "憤怒:力/白炎:技", "速", "火屬性速基因(特大)：女王猛毒 / 炫目烈焰"], ["銀火龍", "技", "憤怒:速/白炎:力", "技", "火屬性技基因(特大)：王者審判 / 閃焰烈風"], ["黑龍", "力", "憤怒:速/超怒:技", "不可", "-共鬥終局最終挑戰 Boss，不可成為隨行獸-"], ["絢輝龍", "速", "殼怒:力/解技/解怒:速", "不可", "-共鬥專用大型副本 Boss，不可成為隨行獸-"], ["燼滅刃斬龍", "力", "蓄熱:速/憤怒:技", "力", "火屬性力基因(特大)：燼滅刃爆燃斬 / 尾部蓄熱"], ["青電主電龍", "技", "電荷:力/空中:速", "技", "雷屬性技基因(特大)：青電主電漿劈扣 / 電荷雷暴"], ["天眼泡狐龍", "技", "妖泡:速/開眼:力", "技", "水屬性技基因(特大)：天眼妖之舞 / 狐火泡纏"], ["銀嶺巨獸", "力", "鼻纏:技/憤怒:速", "力", "冰屬性力基因(特大)：銀嶺銀世界 / 百萬噸壓殺"], ["大轟龍", "速", "憤怒:力/爆氣:技", "速", "無屬性速基因(特大)：大轟爆裂狂吼"], ["黑炎王火龍", "力", "飛行:速/空怒:技", "力", "火屬性力基因(特大)：黑炎王超級爆炎 / 日輪高空"], ["麒麟亞種", "速", "憤怒:技", "速", "冰屬性速基因(特大)：冰靈大蛇落冰 / 冰霧寒流"], ["牙獵犬", "速", "憤怒:力", "速", "各屬性速基因(大)：牙獵犬屬性強襲 (隨屬性改變)"]
+      // 更新追加 DLC 魔物
+      ["金火龍", "開場:速 ➡️ 憤怒:力 ➡️ 白炎:技", "速", "火屬性速：狀態異常增傷(特大)", "古地龍巢", "巢穴探測"],
+      ["銀火龍", "開場:技 ➡️ 憤怒:速 ➡️ 白炎:力", "技", "火屬性技：會心加成(特大)", "古地龍巢", "飛行"],
+      ["黑龍", "開場:力 ➡️ 憤怒:速 ➡️ 超怒:技", "不可", "- 隱藏 Boss -", "共鬥副本", "無"],
+      ["絢輝龍", "開場:速 ➡️ 殼怒:力 ➡️ 解放:速", "不可", "- 副本 Boss -", "共鬥副本", "無"],
+      ["燼滅刃斬龍", "開場:力 ➡️ 蓄熱:速 ➡️ 憤怒:技", "力", "火屬性力：爆破增幅(特大)", "共鬥副本", "怪物探測"],
+      ["青電主電龍", "開場:技 ➡️ 電荷:力 ➡️ 飛空:速", "技", "雷屬性技：會心加成(特大)", "共鬥副本", "飛行"],
+      ["天眼泡狐龍", "開場:技 ➡️ 妖泡:速 ➡️ 開眼:力", "技", "水屬性技：迴避性能(特大)", "共鬥副本", "水上移動 / 突進"],
+      ["銀嶺巨獸", "開場:力 ➡️ 鼻纏:技 ➡️ 憤怒:速", "力", "冰屬性力：體力增加(特大)", "共鬥副本", "咆哮 / 碎岩"],
+      ["大轟龍", "開場:速 ➡️ 憤怒:力 ➡️ 爆氣:技", "速", "無屬性速：正面對決(特大)", "共鬥副本", "突進 / 爬藤"],
+      ["黑炎王火龍", "開場:力 ➡️ 飛行:速 ➡️ 空怒:技", "力", "火屬性力：火增幅(特大)", "共鬥副本", "飛行"],
+      ["麒麟亞種", "開場:速 ➡️ 憤怒:技", "速", "冰屬性速：狀態異常賦予(特大)", "共鬥副本", "跳躍"],
+      ["牙獵犬", "開場:速 ➡️ 憤怒:力", "速", "隨屬性速：牽絆加成(大)", "共鬥副本", "跳躍 / 突進"]
     ];
 
     const monsterData = rawData.map((item, index) => {
+      // 處理猜拳字串，將 "➡️" 轉換為帶有顏色的標籤
+      let patternHtml = '';
+      if(item[1].includes("➡️")){
+        const phases = item[1].split("➡️").map(p => p.trim());
+        phases.forEach((p, i) => {
+          let pClass = '';
+          if(p.includes('力')) pClass = 'pattern-power';
+          else if(p.includes('速')) pClass = 'pattern-speed';
+          else if(p.includes('技')) pClass = 'pattern-tech';
+          
+          patternHtml += `<span class="pattern-box ${pClass}">${p}</span>`;
+          if(i < phases.length - 1) patternHtml += `<span class="pattern-arrow"> ➡️ </span>`;
+        });
+      } else {
+        // 沒有箭頭的維持原樣
+        let pClass = '';
+        if(item[1].includes('力')) pClass = 'pattern-power';
+        else if(item[1].includes('速')) pClass = 'pattern-speed';
+        else if(item[1].includes('技')) pClass = 'pattern-tech';
+        patternHtml = `<span class="pattern-box ${pClass}">${item[1]}</span>`;
+      }
+
       return {
         id: "m_" + index,
         name: item[0],
-        enemyNormal: item[1],
-        enemySpecial: item[2],
-        ownType: item[3],
-        geneInfo: item[4],
-        isUpdate: index >= 122
+        searchStr: (item[0] + item[1] + item[3] + item[4] + item[5]).toLowerCase(), // 組合搜尋字串
+        enemyRaw: item[1],
+        patternHtml: patternHtml,
+        ownType: item[2],
+        geneInfo: item[3],
+        location: item[4],
+        ride: item[5]
       };
     });
 
-    let favorites = JSON.parse(localStorage.getItem('mhst2_favs_v3')) || [];
+    let favorites = JSON.parse(localStorage.getItem('mhst2_favs_v4')) || [];
     let searchKeyword = '';
     let activeEnemyType = '';
     let activeOwnType = '';
@@ -119,17 +310,44 @@
     const favListDiv = document.getElementById('favList');
     const favTitle = document.getElementById('favTitle');
     const mainTitle = document.getElementById('mainTitle');
+    
+    // Lightbox elements
+    const eggModal = document.getElementById('eggModal');
+    const openModalBtn = document.getElementById('openModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const eggImg = document.getElementById('eggImg');
+
+    // Zoom functionality
+    eggImg.addEventListener('click', (e) => {
+      e.stopPropagation();
+      eggImg.classList.toggle('zoomed');
+    });
+
+    openModalBtn.addEventListener('click', () => {
+      eggModal.classList.add('active');
+      eggImg.classList.remove('zoomed'); // 打開時預設不放大
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      eggModal.classList.remove('active');
+    });
+
+    // 點擊背景關閉
+    eggModal.addEventListener('click', (e) => {
+      if(e.target === eggModal || e.target.classList.contains('img-wrapper')) {
+        eggModal.classList.remove('active');
+      }
+    });
 
     function render() {
       const filtered = monsterData.filter(m => {
-        const matchesSearch = m.name.includes(searchKeyword) || m.geneInfo.includes(searchKeyword);
-        const allEnemyPatterns = m.enemyNormal + m.enemySpecial;
-        const matchesEnemy = activeEnemyType ? allEnemyPatterns.includes(activeEnemyType) : true;
+        const matchesSearch = searchKeyword === '' || m.searchStr.includes(searchKeyword.toLowerCase());
+        const matchesEnemy = activeEnemyType ? m.enemyRaw.includes(activeEnemyType) : true;
         const matchesOwn = activeOwnType ? m.ownType === activeOwnType : true;
         return matchesSearch && matchesEnemy && matchesOwn;
       });
 
-      mainTitle.innerText = `全魔物究極圖鑑 (已篩選出 ${filtered.length} 隻)`;
+      mainTitle.innerText = `全魔物究極圖鑑 (共 ${filtered.length} 隻)`;
 
       const favMonsters = filtered.filter(m => favorites.includes(m.id));
       const normalMonsters = filtered.filter(m => !favorites.includes(m.id));
@@ -145,49 +363,40 @@
       if (normalMonsters.length > 0) {
         mainListDiv.innerHTML = normalMonsters.map(m => generateCardHtml(m, false)).join('');
       } else if (favMonsters.length === 0) {
-        mainListDiv.innerHTML = '<div class="empty-prompt">查無此魔物或基因，請更換關鍵字。</div>';
+        mainListDiv.innerHTML = '<div class="empty-prompt">查無資料，請更換關鍵字或清除篩選。</div>';
       } else {
         mainListDiv.innerHTML = '';
       }
     }
 
     function generateCardHtml(m, isPinned) {
-      const getPatternClass = (p) => {
-        if (p.includes('力')) return 'pattern-power';
-        if (p.includes('速')) return 'pattern-speed';
-        if (p.includes('技')) return 'pattern-tech';
-        return '';
-      };
-
       let ownBadgeHtml = '';
-      if (m.ownType === '力') ownBadgeHtml = '<span class="own-badge badge-power">包包：🔴 力型</span>';
-      else if (m.ownType === '速') ownBadgeHtml = '<span class="own-badge badge-speed">包包：🔵 速型</span>';
-      else if (m.ownType === '技') ownBadgeHtml = '<span class="own-badge badge-tech">包包：🟢 技型</span>';
+      if (m.ownType === '力') ownBadgeHtml = '<span class="own-badge badge-power">包包：🔴 力</span>';
+      else if (m.ownType === '速') ownBadgeHtml = '<span class="own-badge badge-speed">包包：🔵 速</span>';
+      else if (m.ownType === '技') ownBadgeHtml = '<span class="own-badge badge-tech">包包：🟢 技</span>';
       else ownBadgeHtml = '<span class="own-badge badge-none">無法收服</span>';
-
-      let enemyHtml = `<span class="pattern-box ${getPatternClass(m.enemyNormal)}">通常: ${m.enemyNormal}</span>`;
-      if (m.enemySpecial) {
-        const parts = m.enemySpecial.split('/');
-        parts.forEach(part => {
-          enemyHtml += ` <span class="pattern-box ${getPatternClass(part)}">${part}</span>`;
-        });
-      }
 
       return `
         <div class="monster-card">
           <div class="card-header">
             <div class="name-block">
               <span class="monster-name">${m.name}</span>
-              ${m.isUpdate ? '<span class="update-badge">DLC 更新</span>' : ''}
               ${ownBadgeHtml}
             </div>
             <button class="pin-btn ${isPinned ? 'pinned' : ''}" onclick="togglePin('${m.id}')">★</button>
           </div>
-          <div class="pattern-row">
-            ${enemyHtml}
+          
+          <div class="info-tags">
+            <span class="info-tag loc">📍 ${m.location}</span>
+            <span class="info-tag ride">🐾 騎乘：${m.ride}</span>
           </div>
+
+          <div class="pattern-row">
+            <span style="color:#aaa;">出招軸：</span> ${m.patternHtml}
+          </div>
+
           <div class="gene-row">
-            <div class="gene-title">🧬 核心基因 / 終局特大招式：</div>
+            <div class="gene-title">🧬 核心基因 Buff：</div>
             <div class="gene-content">${m.geneInfo}</div>
           </div>
         </div>
@@ -200,7 +409,7 @@
       } else {
         favorites.push(id);
       }
-      localStorage.setItem('mhst2_favs_v3', JSON.stringify(favorites));
+      localStorage.setItem('mhst2_favs_v4', JSON.stringify(favorites));
       render();
     };
 
