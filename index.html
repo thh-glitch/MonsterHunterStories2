@@ -119,18 +119,17 @@
     
     .empty-prompt { text-align: center; color: #a0aec0; padding: 50px 20px; font-size: 16px; font-weight: 700; }
     
-    /* Lightbox Modal (Updated for Panzoom) */
+    /* Lightbox Modal (Fixed image cropping) */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 32, 44, 0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px);}
     .modal-overlay.active { display: flex; }
     .modal-close { position: absolute; top: 25px; right: 25px; font-size: 36px; color: #fff; cursor: pointer; z-index: 2010; font-weight: bold; background: rgba(0,0,0,0.3); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;}
     .modal-close:hover { background: rgba(0,0,0,0.6); }
-    /* Container hidden overflow for panning */
-    .img-wrapper { width: 95%; height: 80%; overflow: hidden; display: flex; justify-content: center; align-items: center; border-radius: 16px; touch-action: none; }
-    .egg-image { max-width: 100%; max-height: 100%; transform-origin: center; border-radius: 12px; }
-    .modal-hint { color: #e2e8f0; font-size: 14px; font-weight: 700; margin-top: 20px; background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 20px;}
+    .img-wrapper { width: 100%; height: 80%; overflow: hidden; display: flex; justify-content: center; align-items: center; border-radius: 16px; touch-action: none; }
+    /* 加入 object-fit: contain 保證圖片初始完整呈現 */
+    .egg-image { max-width: 100%; max-height: 100%; object-fit: contain; transform-origin: center; border-radius: 12px; }
+    .modal-hint { color: #e2e8f0; font-size: 14px; font-weight: 700; margin-top: 20px; background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 20px; z-index: 2010;}
 
   </style>
-  <!-- 引入 Panzoom 處理兩指縮放與拖曳 -->
   <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
 </head>
 <body>
@@ -150,7 +149,6 @@
       <button id="openModal" class="egg-btn">🥚 蛋紋圖鑑</button>
     </div>
     <div class="filter-row">
-      <!-- 新增實用基因過濾器 -->
       <div class="filter-group">
         <span class="filter-label">🧬 實用基因：</span>
         <div class="tag-container" id="geneFilters">
@@ -302,23 +300,15 @@
       ["鏖魔角龍", "開場:速 ➡️ 憤怒:力[註:進入狂暴狀態] ➡️ 狂怒:速[註:血量極低，出招帶裂傷]", "速", "【被動】底力基因(特大)(無/速)：殘血時攻擊防禦飆到極限", "拉穆努 (超稀有)", "咆哮 / 地中移動"], 
       ["荒鉤爪轟龍", "開場:力 ➡️ 憤怒:速", "力", "【被動】破壞王(特大)(無/力)", "艾卡拿大陸 (超稀有)", "突進 / 爬藤"], 
       ["金獅子", "開場:力 ➡️ 鬥氣:速[註:變身超級賽亞人黃髮]", "力", "【被動】鬥氣特質(特大)(雷/力)：犧牲防禦換取毀滅性雷電傷害", "拉穆努 (超稀有)", "碎岩 / 跳躍"], 
-      
-      // 更新 1: 修正紫毒姬屬性及猜拳
       ["紫毒姬雌火龍", "開場:速 ➡️ 憤怒:力", "速", "【被動】狀態異常賦予(特大)(火/速)：異常流核心 ｜ 女王劇毒超高扣血", "貝怒戈 (超稀有)", "巢穴探測"], 
-      
       ["傲屠娜", "開場:技 ➡️ 雙翅:力[註:長出兩翼] ➡️ 三翅:速[註:進入最終型態]", "不可", "- 終局最終Boss -", "龍之據點", "無"], 
-      
-      // 更新 4: 補上核心實用基因，以便用關鍵字過濾
       ["滅盡龍", "開場:技 ➡️ 白刺:力[註:長出白刺可破壞倒地] ➡️ 憤怒:速[註:長滿黑刺將放全體大招]", "技", "【被動】再生能力(特大) ｜ 【被動】筋力基因(特大)：無屬性攻擊力極大提升", "貝怒戈 (超稀有)", "咆哮 / 碎岩"], 
       ["麒麟", "開場:速 ➡️ 憤怒:技[註:纏繞落雷]", "速", "【被動】敏捷(特大)(雷/速)：必定先手發動攻擊", "艾卡拿大陸 (超稀有)", "跳躍"], 
       ["炎王龍", "開場:速 ➡️ 憤怒:力[註:全身纏繞火粉塵] ➡️ 滯空:技", "力", "【被動】火點燃增幅(特大)(火/力)：火系至高Buff", "貝怒戈 (超稀有)", "熔岩移動 / 咆哮"], 
       ["冰咒龍", "開場:速 ➡️ 冰罩:技[註:使用冰霧罩身] ➡️ 浮空:力[註:飛空狀態，破翼後解除]", "技", "【被動】冰增幅(特大) ｜ 【被動】精靈加護基因(特大)：機率大幅減少傷害", "洛洛斯卡 (超稀有)", "飛行"], 
       ["鋼龍", "開場:技 ➡️ 憤怒:力[註:纏繞黑風暴] ➡️ 滯空:速", "技", "【被動】全屬性防禦(特大)(冰/技)", "艾卡拿大陸 (超稀有)", "飛行"], 
       ["金火龍", "開場:速 ➡️ 憤怒:力 ➡️ 白炎:技[註:口中含白火，傷害極高]", "速", "【被動】狀態異常增傷(特大) ｜ 【被動】精靈加護基因(大)", "古地龍巢", "巢穴探測"], 
-      
-      // 更新 2: 修正銀火龍為「力作開場」
       ["銀火龍", "開場:力 ➡️ 飛行:技 ➡️ 憤怒:速", "技", "【被動】會心加成(特大)(火/技) ｜ 【主動】王者審判(火系特大加攻技)", "古地龍巢", "飛行"], 
-      
       ["黑龍", "開場:力 ➡️ 憤怒:速[註:進入二階段] ➡️ 超怒:技[註:進入三階段，毀滅烈火]", "不可", "- 隱藏 Boss -", "共鬥副本", "無"], 
       ["絢輝龍", "開場:速 ➡️ 殼怒:力[註:黃金外殼發紅] ➡️ 解放:速[註:脫去黃金外殼]", "不可", "- 副本 Boss -", "共鬥副本", "無"], 
       ["燼滅刃斬龍", "開場:力 ➡️ 蓄熱:速[註:尾巴與喉嚨發紅] ➡️ 憤怒:技", "力", "【被動】爆破增幅(特大)(火/力) ｜ 燼滅刃爆燃斬極高機率附加爆破", "共鬥副本", "怪物探測"], 
@@ -417,16 +407,18 @@
     const closeModalBtn = document.getElementById('closeModal');
     const eggImg = document.getElementById('eggImg');
 
-    // 更新 3: 初始化 Panzoom (支援兩指捏合與滑鼠拖曳)
+    // 【修正點】：移除了 contain: 'outside'，讓圖片完整顯示不裁切
     const panzoom = Panzoom(eggImg, {
       maxScale: 5,
-      contain: 'outside'
+      minScale: 1
     });
     eggImg.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
 
     openModalBtn.addEventListener('click', () => {
       eggModal.classList.add('active');
-      setTimeout(() => panzoom.reset(), 50); // 確保打開時為預設比例
+      setTimeout(() => {
+        panzoom.reset(); // 打開時重置為預設縮放與位置
+      }, 50); 
     });
 
     closeModalBtn.addEventListener('click', () => {
@@ -518,7 +510,6 @@
 
     searchInput.addEventListener('input', (e) => {
       searchKeyword = e.target.value.trim();
-      // 清除基因標籤的高亮狀態
       Array.from(geneFilters.children).forEach(el => el.classList.remove('active'));
       render();
     });
@@ -530,7 +521,6 @@
       render();
     });
 
-    // 處理基因快捷按鈕事件
     geneFilters.addEventListener('click', (e) => {
       if (e.target.classList.contains('filter-tag')) {
         const val = e.target.getAttribute('data-val');
