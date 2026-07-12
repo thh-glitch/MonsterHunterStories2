@@ -20,7 +20,7 @@
       padding: 16px 18px; 
       box-shadow: 0 4px 20px rgba(0,0,0,0.04); 
     }
-    .search-wrapper { position: relative; width: 100%; margin-bottom: 12px; padding-right: 125px;}
+    .search-wrapper { position: relative; width: 100%; margin-bottom: 12px; padding-right: 215px;}
     .search-input { 
       width: 100%; padding: 14px 40px 14px 18px; 
       background-color: #ffffff; border: 2px solid #e2e8f0; 
@@ -29,21 +29,33 @@
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
     .search-input:focus { border-color: #88c0d0; box-shadow: 0 0 0 4px rgba(136, 192, 208, 0.2); }
-    .clear-btn { position: absolute; right: 135px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #a0aec0; font-size: 18px; cursor: pointer; transition: color 0.2s;}
+    .clear-btn { position: absolute; right: 225px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #a0aec0; font-size: 18px; cursor: pointer; transition: color 0.2s;}
     .clear-btn:hover { color: #4a5568; }
     
-    /* Egg Button (Sims lively style) */
-    .egg-btn { 
-      position: absolute; right: 0; top: 50%; transform: translateY(-50%); 
-      background: linear-gradient(135deg, #a3d9a5, #68c071); 
-      border: none; padding: 12px 16px; border-radius: 18px; 
-      color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; 
-      box-shadow: 0 4px 12px rgba(104,192,113,0.3); 
-      display: flex; align-items: center; gap: 6px;
+    /* Action Buttons Area */
+    .action-buttons {
+      position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+      display: flex; gap: 8px;
+    }
+    .action-btn {
+      border: none; padding: 12px 14px; border-radius: 18px; 
+      color: #fff; font-weight: 800; font-size: 13px; cursor: pointer; 
+      display: flex; align-items: center; gap: 4px;
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .egg-btn:hover { transform: translateY(-50%) scale(1.05); box-shadow: 0 6px 16px rgba(104,192,113,0.4); }
-    .egg-btn:active { transform: translateY(-50%) scale(0.95); }
+    .egg-btn { 
+      background: linear-gradient(135deg, #a3d9a5, #68c071); 
+      box-shadow: 0 4px 12px rgba(104,192,113,0.3); 
+    }
+    .egg-btn:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(104,192,113,0.4); }
+    .egg-btn:active { transform: scale(0.95); }
+    
+    .coop-btn {
+      background: linear-gradient(135deg, #f6ad55, #ed8936);
+      box-shadow: 0 4px 12px rgba(237,137,54,0.3);
+    }
+    .coop-btn:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(237,137,54,0.4); }
+    .coop-btn:active { transform: scale(0.95); }
 
     /* Filters */
     .filter-row { display: flex; flex-direction: column; gap: 10px; }
@@ -119,34 +131,106 @@
     
     .empty-prompt { text-align: center; color: #a0aec0; padding: 50px 20px; font-size: 16px; font-weight: 700; }
     
-    /* Lightbox Modal (Fixed image cropping) */
+    /* Lightbox Modal (Common) */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 32, 44, 0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px);}
     .modal-overlay.active { display: flex; }
     .modal-close { position: absolute; top: 25px; right: 25px; font-size: 36px; color: #fff; cursor: pointer; z-index: 2010; font-weight: bold; background: rgba(0,0,0,0.3); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;}
     .modal-close:hover { background: rgba(0,0,0,0.6); }
+    
+    /* Egg Modal Specifics */
     .img-wrapper { width: 100%; height: 80%; overflow: hidden; display: flex; justify-content: center; align-items: center; border-radius: 16px; touch-action: none; }
-    /* 加入 object-fit: contain 保證圖片初始完整呈現 */
     .egg-image { max-width: 100%; max-height: 100%; object-fit: contain; transform-origin: center; border-radius: 12px; }
     .modal-hint { color: #e2e8f0; font-size: 14px; font-weight: 700; margin-top: 20px; background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 20px; z-index: 2010;}
+
+    /* Coop Modal Specifics */
+    .coop-content {
+      background: #ffffff; width: 90%; max-width: 600px; max-height: 85%; 
+      border-radius: 24px; padding: 24px; overflow-y: auto; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .coop-content h2 { font-size: 22px; color: #2d3748; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 3px solid #ed8936; padding-bottom: 10px;}
+    .coop-section { margin-bottom: 24px; }
+    .coop-section h3 { font-size: 18px; color: #c05621; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .coop-table { width: 100%; border-collapse: collapse; font-size: 14px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .coop-table th { background: #edf2f7; color: #4a5568; font-weight: 800; padding: 12px; text-align: left; }
+    .coop-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #2d3748; font-weight: 600;}
+    .coop-table tr:last-child td { border-bottom: none; }
+    .coop-table tr:hover { background-color: #f7fafc; }
+    .highlight-egg { color: #dd6b20; font-weight: 800; }
+    .desc-text { font-size: 13px; color: #718096; margin-bottom: 12px; line-height: 1.5; font-weight: 700;}
 
   </style>
   <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
 </head>
 <body>
-  <!-- Lightbox Modal -->
+  
+  <!-- Lightbox Modal (Egg) -->
   <div id="eggModal" class="modal-overlay">
-    <span class="modal-close" id="closeModal">&times;</span>
+    <span class="modal-close" id="closeEggModal">&times;</span>
     <div class="img-wrapper">
       <img src="mhst2_eggs.png" alt="全魔物蛋紋" class="egg-image" id="eggImg">
     </div>
     <div class="modal-hint">👆 支援兩指捏合縮放與自由拖曳</div>
   </div>
 
+  <!-- Lightbox Modal (Coop Info) -->
+  <div id="coopModal" class="modal-overlay">
+    <span class="modal-close" id="closeCoopModal">&times;</span>
+    <div class="coop-content">
+      <h2>⚔️ 共鬥任務巢穴 (SR票) 掉落指南</h2>
+      
+      <div class="coop-section">
+        <h3>🗺️ 各地帶常規巢穴</h3>
+        <p class="desc-text">使用 SR 票探索不同地帶，最終 BOSS 巢穴必定可摸到對應的古龍或二名魔物。</p>
+        <table class="coop-table">
+          <tr><th>地帶類型</th><th>可取得之古龍</th><th>可取得之二名/稀有種</th></tr>
+          <tr><td>森林地帶</td><td>麒麟</td><td>白疾風迅龍、荒鉤爪轟龍</td></tr>
+          <tr><td>雪原地帶</td><td>冰咒龍</td><td>金雷公雷狼龍</td></tr>
+          <tr><td>沙漠地帶</td><td>麒麟</td><td>鏖魔角龍、荒鉤爪轟龍</td></tr>
+          <tr><td>櫻花地帶</td><td>鋼龍</td><td>紫毒姬雌火龍、金雷公雷狼龍</td></tr>
+          <tr><td>火山地帶</td><td>炎王龍</td><td>燼滅刃斬龍、金獅子</td></tr>
+          <tr><td>密林地帶</td><td>鋼龍</td><td>天眼泡狐龍、白疾風迅龍</td></tr>
+          <tr><td>斜坡地帶</td><td>冰咒龍、天彗龍</td><td>銀火龍、金火龍</td></tr>
+        </table>
+      </div>
+
+      <div class="coop-section">
+        <h3>🌟 特殊主題巢穴 (集大成)</h3>
+        <p class="desc-text">專門為了鎖定特定類型魔物而設立的高階巢穴，前三個支線巢穴蛋池與最終主巢穴完全不同。</p>
+        
+        <table class="coop-table" style="margin-bottom: 16px;">
+          <tr><th colspan="2" style="background:#bee3f8; color:#2b6cb0;">【探索】四大天王的分佈地區</th></tr>
+          <tr><td style="width:30%;">普通支線巢穴</td><td>四大天王(普通種)：電龍、泡狐龍、斬龍、巨獸<br>高階一般魔物：海龍、碎龍、雷狼龍等</td></tr>
+          <tr><td>最終主巢穴</td><td><span class="highlight-egg">必定為四大天王二名/頂級個體：</span><br>青電主電龍、天眼泡狐龍、燼滅刃斬龍、銀嶺巨獸</td></tr>
+        </table>
+
+        <table class="coop-table" style="margin-bottom: 16px;">
+          <tr><th colspan="2" style="background:#fed7d7; color:#c53030;">【探索】亞種・稀有種的巢穴</th></tr>
+          <tr><td style="width:30%;">普通支線巢穴</td><td>稀有種：金火龍、銀火龍<br>古龍/二名：大轟龍、冰麒麟<br>強力亞種：獄狼龍、白海龍、黑角龍、蒼火龍等</td></tr>
+          <tr><td>最終主巢穴</td><td><span class="highlight-egg">銀火龍、金火龍、大轟龍、冰麒麟</span></td></tr>
+        </table>
+
+        <table class="coop-table" style="margin-bottom: 16px;">
+          <tr><th colspan="2" style="background:#e9d8fd; color:#6b46c1;">【探索】古龍的巢穴</th></tr>
+          <tr><td colspan="2">全為古龍蛋：冰咒龍、鋼龍、炎王龍、麒麟、天彗龍</td></tr>
+        </table>
+
+        <table class="coop-table">
+          <tr><th colspan="2" style="background:#c6f6d5; color:#2f855a;">【探索】二名魔物的巢穴</th></tr>
+          <tr><td colspan="2">全為二名魔物：白疾風、金雷公、鏖魔、荒鉤爪、紫毒姬</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div class="sticky-header">
     <div class="search-wrapper">
       <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜魔物、基因、會心、HP...">
       <button id="clearSearch" class="clear-btn">✖</button>
-      <button id="openModal" class="egg-btn">🥚 蛋紋圖鑑</button>
+      <div class="action-buttons">
+        <button id="coopModalBtn" class="action-btn coop-btn">⚔️ 共鬥巢穴</button>
+        <button id="openModal" class="action-btn egg-btn">🥚 蛋紋圖鑑</button>
+      </div>
     </div>
     <div class="filter-row">
       <div class="filter-group">
@@ -204,7 +288,7 @@
       ["狗龍王", "開場:技 ➡️ 憤怒:速", "技", "【被動】夥伴羈絆(無/技)", "艾卡拿大陸", "跳躍"], 
       ["水生獸", "通常:力", "不可", "水屬性耐性", "艾卡拿大陸", "水上移動"], 
       ["水獸", "開場:力 ➡️ 憤怒:技", "力", "【被動】水流增幅(中)(水/力)：提升水屬性攻擊", "艾卡拿大陸", "水上移動"], 
-      ["鬼蛙", "通常:力", "力", "【主動】岩石蓄力(火/力)：蓄力後大防禦", "艾卡拿大陸", "碎岩 / 爬藤"], 
+      ["鬼蛙", "通常:力", "力", "【主 সমাধ岩石蓄力(火/力)：蓄力後大防禦", "艾卡拿大陸", "碎岩 / 爬藤"], 
       ["青熊獸", "開場:力 ➡️ 憤怒:技", "力", "【被動】嗜蜂蜜特質(無/力)：藥草恢復量提升", "艾卡拿大陸", "蜂蜜探測 / 碎岩"], 
       ["彩鳥", "開場:技 ➡️ 憤怒:力", "技", "【主動】治癒之歌(大)(火/技)：戰鬥中群體回血與防禦提升", "艾卡拿大陸", "怪物探測"], 
       ["青怪鳥", "開場:技 ➡️ 憤怒:速", "技", "【被動】火增幅(中)(火/技)：火焰追擊傷害提升", "艾卡拿大陸", "怪物探測"], 
@@ -302,7 +386,8 @@
       ["金獅子", "開場:力 ➡️ 鬥氣:速[註:變身超級賽亞人黃髮]", "力", "【被動】鬥氣特質(特大)(雷/力)：犧牲防禦換取毀滅性雷電傷害", "拉穆努 (超稀有)", "碎岩 / 跳躍"], 
       ["紫毒姬雌火龍", "開場:速 ➡️ 憤怒:力", "速", "【被動】狀態異常賦予(特大)(火/速)：異常流核心 ｜ 女王劇毒超高扣血", "貝怒戈 (超稀有)", "巢穴探測"], 
       ["傲屠娜", "開場:技 ➡️ 雙翅:力[註:長出兩翼] ➡️ 三翅:速[註:進入最終型態]", "不可", "- 終局最終Boss -", "龍之據點", "無"], 
-      ["滅盡龍", "開場:技 ➡️ 白刺:力[註:長出白刺可破壞倒地] ➡️ 憤怒:速[註:長滿黑刺將放全體大招]", "技", "【被動】再生能力(特大) ｜ 【被動】筋力基因(特大)：無屬性攻擊力極大提升", "貝怒戈 (超稀有)", "咆哮 / 碎岩"], 
+      // 👇 已修正滅盡龍的開場屬性為通常:力 ➡️ 白刺:速 ➡️ 憤怒:力
+      ["滅盡龍", "通常:力 ➡️ 白刺:速[註:長出白刺可破壞倒地] ➡️ 憤怒:力[註:長滿黑刺將放全體大招]", "力", "【被動】再生能力(特大) ｜ 【被動】筋力基因(特大)：無屬性攻擊力極大提升", "貝怒戈 (超稀有)", "咆哮 / 碎岩"], 
       ["麒麟", "開場:速 ➡️ 憤怒:技[註:纏繞落雷]", "速", "【被動】敏捷(特大)(雷/速)：必定先手發動攻擊", "艾卡拿大陸 (超稀有)", "跳躍"], 
       ["炎王龍", "開場:速 ➡️ 憤怒:力[註:全身纏繞火粉塵] ➡️ 滯空:技", "力", "【被動】火點燃增幅(特大)(火/力)：火系至高Buff", "貝怒戈 (超稀有)", "熔岩移動 / 咆哮"], 
       ["冰咒龍", "開場:速 ➡️ 冰罩:技[註:使用冰霧罩身] ➡️ 浮空:力[註:飛空狀態，破翼後解除]", "技", "【被動】冰增幅(特大) ｜ 【被動】精靈加護基因(特大)：機率大幅減少傷害", "洛洛斯卡 (超稀有)", "飛行"], 
@@ -402,32 +487,39 @@
     const favTitle = document.getElementById('favTitle');
     const mainTitle = document.getElementById('mainTitle');
     
+    /* Modals Logic */
     const eggModal = document.getElementById('eggModal');
     const openModalBtn = document.getElementById('openModal');
-    const closeModalBtn = document.getElementById('closeModal');
+    const closeEggModalBtn = document.getElementById('closeEggModal');
     const eggImg = document.getElementById('eggImg');
 
-    // 【修正點】：移除了 contain: 'outside'，讓圖片完整顯示不裁切
-    const panzoom = Panzoom(eggImg, {
-      maxScale: 5,
-      minScale: 1
-    });
+    const coopModal = document.getElementById('coopModal');
+    const coopModalBtn = document.getElementById('coopModalBtn');
+    const closeCoopModalBtn = document.getElementById('closeCoopModal');
+
+    const panzoom = Panzoom(eggImg, { maxScale: 5, minScale: 1 });
     eggImg.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
 
+    // Egg Modal Events
     openModalBtn.addEventListener('click', () => {
       eggModal.classList.add('active');
-      setTimeout(() => {
-        panzoom.reset(); // 打開時重置為預設縮放與位置
-      }, 50); 
+      setTimeout(() => { panzoom.reset(); }, 50); 
     });
-
-    closeModalBtn.addEventListener('click', () => {
-      eggModal.classList.remove('active');
-    });
-
+    closeEggModalBtn.addEventListener('click', () => { eggModal.classList.remove('active'); });
     eggModal.addEventListener('click', (e) => {
       if(e.target === eggModal || e.target.classList.contains('img-wrapper')) {
         eggModal.classList.remove('active');
+      }
+    });
+
+    // Coop Modal Events
+    coopModalBtn.addEventListener('click', () => {
+      coopModal.classList.add('active');
+    });
+    closeCoopModalBtn.addEventListener('click', () => { coopModal.classList.remove('active'); });
+    coopModal.addEventListener('click', (e) => {
+      if(e.target === coopModal) {
+        coopModal.classList.remove('active');
       }
     });
 
