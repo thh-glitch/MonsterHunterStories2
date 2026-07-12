@@ -32,7 +32,7 @@
     .clear-btn { position: absolute; right: 135px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #a0aec0; font-size: 18px; cursor: pointer; transition: color 0.2s;}
     .clear-btn:hover { color: #4a5568; }
     
-    /* Egg Button (Sims lively style) */
+    /* Egg Button */
     .egg-btn { 
       position: absolute; right: 0; top: 50%; transform: translateY(-50%); 
       background: linear-gradient(135deg, #a3d9a5, #68c071); 
@@ -59,14 +59,27 @@
     }
     .filter-tag:hover { background-color: #e2e8f0; }
     .filter-tag.active { background-color: #4fd1c5; color: #fff; border-color: #38b2ac; box-shadow: 0 2px 8px rgba(79, 209, 197, 0.4); }
+    
+    /* 專屬：共鬥地圖 Tag */
+    .filter-tag.loc-tag.active { background-color: #f6ad55; color: #fff; border-color: #ed8936; box-shadow: 0 2px 8px rgba(246, 173, 85, 0.4); }
+    .filter-tag.loc-tag[data-val="共鬥巢穴"] { border-color: #d6bcfa; color: #805ad5; }
+    .filter-tag.loc-tag[data-val="共鬥巢穴"]:hover { background-color: #faf5ff; }
+    .filter-tag.loc-tag[data-val="共鬥巢穴"].active { background-color: #9f7aea; color: #fff; border-color: #805ad5; box-shadow: 0 2px 8px rgba(159, 122, 234, 0.4); }
+
     .filter-tag.gene-tag { background-color: #fff5f5; border-color: #fed7d7; color: #e53e3e; }
     .filter-tag.gene-tag:hover { background-color: #fed7d7; }
     .filter-tag.gene-tag.active { background-color: #e53e3e; color: #fff; border-color: #c53030; box-shadow: 0 2px 8px rgba(229, 62, 62, 0.4); }
-    
+
     /* List & Cards */
-    .section-title { font-size: 16px; font-weight: 800; color: #4a5568; padding: 20px 18px 12px 18px; display: flex; align-items: center; }
-    .section-title::after { content: ''; flex: 1; height: 2px; background: #e2e8f0; margin-left: 12px; border-radius: 2px;}
+    .section-title { font-size: 16px; font-weight: 800; color: #4a5568; padding: 20px 18px 12px 18px; display: flex; align-items: center; justify-content: space-between;}
+    .title-line { flex: 1; height: 2px; background: #e2e8f0; margin-left: 12px; border-radius: 2px;}
+    .team-count { font-size: 14px; background: #ebf4ff; color: #3182ce; padding: 4px 10px; border-radius: 12px; margin-left: 10px;}
+    
     .monster-list { padding: 0 16px; }
+    
+    /* 隊伍專屬外觀 */
+    .team-list { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 0 16px; margin-bottom: 20px;}
+    .team-card { border: 2px solid #90cdf4; box-shadow: 0 4px 15px rgba(66, 153, 225, 0.15); background: linear-gradient(to bottom right, #ffffff, #f7fafc); }
     
     .monster-card { 
       background-color: #ffffff; border-radius: 24px; padding: 20px; margin-bottom: 20px; 
@@ -84,18 +97,22 @@
     .badge-tech { background-color: #68d391; }
     .badge-none { background-color: #cbd5e0; color: #4a5568; box-shadow: none; }
     
-    .pin-btn { 
-      position: absolute; right: 14px; top: 18px; background: none; border: none; 
-      font-size: 26px; color: #cbd5e0; cursor: pointer; padding: 4px; line-height: 1; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* 招募隊友按鈕 */
+    .recruit-btn { 
+      position: absolute; right: 14px; top: 18px; background: #edf2f7; border: none; 
+      font-size: 14px; color: #4a5568; cursor: pointer; padding: 6px 10px; border-radius: 12px; font-weight: 800; transition: all 0.2s ease;
     }
-    .pin-btn:hover { transform: scale(1.2); }
-    .pin-btn.pinned { color: #f6e05e; filter: drop-shadow(0 2px 4px rgba(246, 224, 94, 0.4)); }
+    .recruit-btn:hover { background: #e2e8f0; transform: scale(1.05); }
+    .recruit-btn.in-team { background: #4299e1; color: #fff; box-shadow: 0 2px 8px rgba(66, 153, 225, 0.4); }
+    .recruit-btn.in-team::before { content: '✔️ ';}
+    .recruit-btn:not(.in-team)::before { content: '➕ ';}
     
     /* Location & Ride Tags */
     .info-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
     .info-tag { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px; }
     .info-tag.ride { color: #2f855a; background-color: #c6f6d5; }
     .info-tag.loc { color: #2b6cb0; background-color: #bee3f8; }
+    .info-tag.loc-coop { color: #553c9a; background-color: #e9d8fd; border: 1px solid #d6bcfa; } /* 共鬥專屬色 */
 
     /* Combat Pattern Axis */
     .pattern-row { margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; font-size: 13px; }
@@ -119,26 +136,28 @@
     
     .empty-prompt { text-align: center; color: #a0aec0; padding: 50px 20px; font-size: 16px; font-weight: 700; }
     
-    /* Lightbox Modal (Fixed image cropping) */
+    /* Toast Notification */
+    .toast { visibility: hidden; min-width: 250px; background-color: #e53e3e; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: opacity 0.3s, visibility 0.3s; opacity: 0;}
+    .toast.show { visibility: visible; opacity: 1; }
+
+    /* Lightbox Modal */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 32, 44, 0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px);}
     .modal-overlay.active { display: flex; }
     .modal-close { position: absolute; top: 25px; right: 25px; font-size: 36px; color: #fff; cursor: pointer; z-index: 2010; font-weight: bold; background: rgba(0,0,0,0.3); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;}
     .modal-close:hover { background: rgba(0,0,0,0.6); }
     .img-wrapper { width: 100%; height: 80%; overflow: hidden; display: flex; justify-content: center; align-items: center; border-radius: 16px; touch-action: none; }
-    /* 加入 object-fit: contain 保證圖片初始完整呈現 */
     .egg-image { max-width: 100%; max-height: 100%; object-fit: contain; transform-origin: center; border-radius: 12px; }
     .modal-hint { color: #e2e8f0; font-size: 14px; font-weight: 700; margin-top: 20px; background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 20px; z-index: 2010;}
-
   </style>
   <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
 </head>
 <body>
+  <div id="toastAlert" class="toast">隊伍位置已滿 (最高 6 隻)！請先移除其他隊友。</div>
+
   <!-- Lightbox Modal -->
   <div id="eggModal" class="modal-overlay">
     <span class="modal-close" id="closeModal">&times;</span>
-    <div class="img-wrapper">
-      <img src="mhst2_eggs.png" alt="全魔物蛋紋" class="egg-image" id="eggImg">
-    </div>
+    <div class="img-wrapper"><img src="mhst2_eggs.png" alt="全魔物蛋紋" class="egg-image" id="eggImg"></div>
     <div class="modal-hint">👆 支援兩指捏合縮放與自由拖曳</div>
   </div>
 
@@ -149,6 +168,19 @@
       <button id="openModal" class="egg-btn">🥚 蛋紋圖鑑</button>
     </div>
     <div class="filter-row">
+      <!-- 新增：地圖與共鬥巢穴篩選 -->
+      <div class="filter-group">
+        <span class="filter-label">🗺️ 巢穴位置：</span>
+        <div class="tag-container" id="locFilters">
+          <div class="filter-tag loc-tag" data-val="夏口洛">夏口洛</div>
+          <div class="filter-tag loc-tag" data-val="艾卡拿">艾卡拿</div>
+          <div class="filter-tag loc-tag" data-val="洛洛斯卡">洛洛斯卡</div>
+          <div class="filter-tag loc-tag" data-val="拉穆努">拉穆努</div>
+          <div class="filter-tag loc-tag" data-val="貝怒戈">貝怒戈</div>
+          <div class="filter-tag loc-tag" data-val="古地龍巢">古地龍巢</div>
+          <div class="filter-tag loc-tag" data-val="共鬥巢穴">✨ 共鬥巢穴</div>
+        </div>
+      </div>
       <div class="filter-group">
         <span class="filter-label">🧬 實用基因：</span>
         <div class="tag-container" id="geneFilters">
@@ -178,12 +210,19 @@
     </div>
   </div>
 
-  <div id="favTitle" class="section-title" style="display:none;">⭐ 已釘選的目標</div>
-  <div id="favList" class="monster-list"></div>
-  <div id="mainTitle" class="section-title">全魔物究極圖鑑</div>
+  <!-- 隊友編制區域 -->
+  <div id="teamTitle" class="section-title" style="display:none;">
+    <span>🎒 我的隨行獸隊伍</span>
+    <span class="title-line"></span>
+    <span id="teamCounter" class="team-count">0 / 6</span>
+  </div>
+  <div id="teamList" class="team-list"></div>
+  
+  <div id="mainTitle" class="section-title">全魔物究極圖鑑 <span class="title-line"></span></div>
   <div id="mainList" class="monster-list"></div>
 
   <script>
+    // 修正了共鬥巢穴的文字
     const rawData = [
       ["草食龍", "通常:力", "力", "【被動】耐震(小)(無/力)：前期防震 / 牽絆加成", "夏口洛島", "植物探測"], 
       ["首鳴龍", "通常:技", "技", "【被動】體力增加(小)(無/技)：提升HP上限 / 恢復量上升", "艾卡拿大陸", "植物探測"], 
@@ -309,16 +348,16 @@
       ["鋼龍", "開場:技 ➡️ 憤怒:力[註:纏繞黑風暴] ➡️ 滯空:速", "技", "【被動】全屬性防禦(特大)(冰/技)", "艾卡拿大陸 (超稀有)", "飛行"], 
       ["金火龍", "開場:速 ➡️ 憤怒:力 ➡️ 白炎:技[註:口中含白火，傷害極高]", "速", "【被動】狀態異常增傷(特大) ｜ 【被動】精靈加護基因(大)", "古地龍巢", "巢穴探測"], 
       ["銀火龍", "開場:力 ➡️ 飛行:技 ➡️ 憤怒:速", "技", "【被動】會心加成(特大)(火/技) ｜ 【主動】王者審判(火系特大加攻技)", "古地龍巢", "飛行"], 
-      ["黑龍", "開場:力 ➡️ 憤怒:速[註:進入二階段] ➡️ 超怒:技[註:進入三階段，毀滅烈火]", "不可", "- 隱藏 Boss -", "共鬥副本", "無"], 
-      ["絢輝龍", "開場:速 ➡️ 殼怒:力[註:黃金外殼發紅] ➡️ 解放:速[註:脫去黃金外殼]", "不可", "- 副本 Boss -", "共鬥副本", "無"], 
-      ["燼滅刃斬龍", "開場:力 ➡️ 蓄熱:速[註:尾巴與喉嚨發紅] ➡️ 憤怒:技", "力", "【被動】爆破增幅(特大)(火/力) ｜ 燼滅刃爆燃斬極高機率附加爆破", "共鬥副本", "怪物探測"], 
-      ["青電主電龍", "開場:技 ➡️ 電荷:力[註:全身充滿青色電流] ➡️ 飛空:速", "技", "【被動】會心加成(特大)(雷/技) ｜ 青電主電漿劈扣", "共鬥副本", "飛行"], 
-      ["天眼泡狐龍", "開場:技 ➡️ 妖泡:速[註:放出青色狐火泡] ➡️ 開眼:力[註:憤怒睜開紅眼]", "技", "【被動】迴避性能(特大)(水/技) ｜ 天眼妖之舞(水系高暴擊)", "共鬥副本", "水上移動 / 突進"], 
-      ["銀嶺巨獸", "開場:力 ➡️ 鼻纏:技[註:鼻子上包覆巨大冰塊] ➡️ 憤怒:速", "力", "【被動】體力增加(特大)(冰/力) ｜ 銀嶺銀世界大範圍超高加攻", "共鬥副本", "咆哮 / 碎岩"], 
-      ["大轟龍", "開場:速 ➡️ 憤怒:力 ➡️ 爆氣:技[註:全身肌肉膨脹血管暴凸]", "速", "【被動】正面對決(特大)(無/速)：對決獲勝大幅增加牽絆與傷害", "共鬥副本", "突進 / 爬藤"], 
-      ["黑炎王火龍", "開場:力 ➡️ 飛行:速 ➡️ 空怒:技[註:飛在空中並極度憤怒]", "力", "【被動】火增幅(特大)(火/力) ｜ 黑炎王超級爆炎(破防加攻)", "共鬥副本", "飛行"], 
-      ["麒麟亞種", "開場:速 ➡️ 憤怒:技[註:周圍降下極寒冰氣]", "速", "【被動】狀態異常賦予(特大)(冰/速)：冰靈大蛇高機率極寒凍結", "共鬥副本", "跳躍"], 
-      ["牙獵犬", "開場:速 ➡️ 憤怒:力", "速", "【被動】牽絆加成(大)(隨屬性/速) ｜ 屬性攻擊增幅", "共鬥副本", "跳躍 / 突進"]
+      ["黑龍", "開場:力 ➡️ 憤怒:速[註:進入二階段] ➡️ 超怒:技[註:進入三階段，毀滅烈火]", "不可", "- 隱藏 Boss -", "共鬥巢穴", "無"], 
+      ["絢輝龍", "開場:速 ➡️ 殼怒:力[註:黃金外殼發紅] ➡️ 解放:速[註:脫去黃金外殼]", "不可", "- 副本 Boss -", "共鬥巢穴", "無"], 
+      ["燼滅刃斬龍", "開場:力 ➡️ 蓄熱:速[註:尾巴與喉嚨發紅] ➡️ 憤怒:技", "力", "【被動】爆破增幅(特大)(火/力) ｜ 燼滅刃爆燃斬極高機率附加爆破", "共鬥巢穴", "怪物探測"], 
+      ["青電主電龍", "開場:技 ➡️ 電荷:力[註:全身充滿青色電流] ➡️ 飛空:速", "技", "【被動】會心加成(特大)(雷/技) ｜ 青電主電漿劈扣", "共鬥巢穴", "飛行"], 
+      ["天眼泡狐龍", "開場:技 ➡️ 妖泡:速[註:放出青色狐火泡] ➡️ 開眼:力[註:憤怒睜開紅眼]", "技", "【被動】迴避性能(特大)(水/技) ｜ 天眼妖之舞(水系高暴擊)", "共鬥巢穴", "水上移動 / 突進"], 
+      ["銀嶺巨獸", "開場:力 ➡️ 鼻纏:技[註:鼻子上包覆巨大冰塊] ➡️ 憤怒:速", "力", "【被動】體力增加(特大)(冰/力) ｜ 銀嶺銀世界大範圍超高加攻", "共鬥巢穴", "咆哮 / 碎岩"], 
+      ["大轟龍", "開場:速 ➡️ 憤怒:力 ➡️ 爆氣:技[註:全身肌肉膨脹血管暴凸]", "速", "【被動】正面對決(特大)(無/速)：對決獲勝大幅增加牽絆與傷害", "共鬥巢穴", "突進 / 爬藤"], 
+      ["黑炎王火龍", "開場:力 ➡️ 飛行:速 ➡️ 空怒:技[註:飛在空中並極度憤怒]", "力", "【被動】火增幅(特大)(火/力) ｜ 黑炎王超級爆炎(破防加攻)", "共鬥巢穴", "飛行"], 
+      ["麒麟亞種", "開場:速 ➡️ 憤怒:技[註:周圍降下極寒冰氣]", "速", "【被動】狀態異常賦予(特大)(冰/速)：冰靈大蛇高機率極寒凍結", "共鬥巢穴", "跳躍"], 
+      ["牙獵犬", "開場:速 ➡️ 憤怒:力", "速", "【被動】牽絆加成(大)(隨屬性/速) ｜ 屬性攻擊增幅", "共鬥巢穴", "跳躍 / 突進"]
     ];
 
     const monsterData = rawData.map((item, index) => {
@@ -328,24 +367,17 @@
         phases.forEach((p, i) => {
           let note = "";
           let mainAction = p;
-          
           if(p.includes("[註:")){
             const parts = p.split("[註:");
             mainAction = parts[0];
             note = parts[1].replace("]", "");
           }
-
           let pClass = '';
           if(mainAction.includes('力')) pClass = 'pattern-power';
           else if(mainAction.includes('速')) pClass = 'pattern-speed';
           else if(mainAction.includes('技')) pClass = 'pattern-tech';
           
-          patternHtml += `
-            <div class="pattern-step">
-              <span class="pattern-box ${pClass}">${mainAction}</span>
-              ${note ? `<span class="pattern-note">(${note})</span>` : ''}
-            </div>
-          `;
+          patternHtml += `<div class="pattern-step"><span class="pattern-box ${pClass}">${mainAction}</span>${note ? `<span class="pattern-note">(${note})</span>` : ''}</div>`;
           if(i < phases.length - 1) patternHtml += `<span class="pattern-arrow"> ➡️ </span>`;
         });
       } else {
@@ -360,13 +392,7 @@
         if(mainAction.includes('力')) pClass = 'pattern-power';
         else if(mainAction.includes('速')) pClass = 'pattern-speed';
         else if(mainAction.includes('技')) pClass = 'pattern-tech';
-        
-        patternHtml = `
-            <div class="pattern-step">
-              <span class="pattern-box ${pClass}">${mainAction}</span>
-              ${note ? `<span class="pattern-note">(${note})</span>` : ''}
-            </div>
-        `;
+        patternHtml = `<div class="pattern-step"><span class="pattern-box ${pClass}">${mainAction}</span>${note ? `<span class="pattern-note">(${note})</span>` : ''}</div>`;
       }
 
       let searchStr = (item[0] + item[1] + item[3] + item[4] + item[5]).toLowerCase();
@@ -387,49 +413,50 @@
       };
     });
 
-    let favorites = JSON.parse(localStorage.getItem('mhst2_favs_sims')) || [];
+    // 隊伍編制狀態 (最多6隻)
+    let myTeam = JSON.parse(localStorage.getItem('mhst2_team')) || [];
+    
     let searchKeyword = '';
+    let activeLocType = '';
     let activeEnemyType = '';
     let activeOwnType = '';
 
     const searchInput = document.getElementById('searchInput');
     const clearSearchBtn = document.getElementById('clearSearch');
+    const locFilters = document.getElementById('locFilters');
     const geneFilters = document.getElementById('geneFilters');
     const enemyFilters = document.getElementById('enemyFilters');
     const ownFilters = document.getElementById('ownFilters');
+    
     const mainListDiv = document.getElementById('mainList');
-    const favListDiv = document.getElementById('favList');
-    const favTitle = document.getElementById('favTitle');
+    const teamListDiv = document.getElementById('teamList');
+    const teamTitle = document.getElementById('teamTitle');
+    const teamCounter = document.getElementById('teamCounter');
     const mainTitle = document.getElementById('mainTitle');
     
+    const toastAlert = document.getElementById('toastAlert');
     const eggModal = document.getElementById('eggModal');
     const openModalBtn = document.getElementById('openModal');
     const closeModalBtn = document.getElementById('closeModal');
     const eggImg = document.getElementById('eggImg');
 
-    // 【修正點】：移除了 contain: 'outside'，讓圖片完整顯示不裁切
-    const panzoom = Panzoom(eggImg, {
-      maxScale: 5,
-      minScale: 1
-    });
+    const panzoom = Panzoom(eggImg, { maxScale: 5, minScale: 1 });
     eggImg.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
 
     openModalBtn.addEventListener('click', () => {
       eggModal.classList.add('active');
-      setTimeout(() => {
-        panzoom.reset(); // 打開時重置為預設縮放與位置
-      }, 50); 
+      setTimeout(() => { panzoom.reset(); }, 50); 
     });
 
-    closeModalBtn.addEventListener('click', () => {
-      eggModal.classList.remove('active');
-    });
-
+    closeModalBtn.addEventListener('click', () => { eggModal.classList.remove('active'); });
     eggModal.addEventListener('click', (e) => {
-      if(e.target === eggModal || e.target.classList.contains('img-wrapper')) {
-        eggModal.classList.remove('active');
-      }
+      if(e.target === eggModal || e.target.classList.contains('img-wrapper')) eggModal.classList.remove('active');
     });
+
+    function showToast() {
+      toastAlert.classList.add('show');
+      setTimeout(() => { toastAlert.classList.remove('show'); }, 3000);
+    }
 
     function render() {
       const filtered = monsterData.filter(m => {
@@ -437,52 +464,62 @@
         const terms = keyword.split(" ").filter(t => t.trim() !== "");
         const matchesSearch = terms.every(term => m.searchStr.includes(term));
         
+        const matchesLoc = activeLocType ? m.location.includes(activeLocType) : true;
         const matchesEnemy = activeEnemyType ? m.enemyRaw.includes(activeEnemyType) : true;
         const matchesOwn = activeOwnType ? m.ownType === activeOwnType : true;
-        return matchesSearch && matchesEnemy && matchesOwn;
+        
+        return matchesSearch && matchesLoc && matchesEnemy && matchesOwn;
       });
 
-      mainTitle.innerText = `圖鑑資料庫 (共 ${filtered.length} 筆)`;
+      mainTitle.innerHTML = `全圖鑑資料庫 (共 ${filtered.length} 筆) <span class="title-line"></span>`;
+      teamCounter.innerText = `${myTeam.length} / 6`;
 
-      const favMonsters = filtered.filter(m => favorites.includes(m.id));
-      const normalMonsters = filtered.filter(m => !favorites.includes(m.id));
+      // 隊伍顯示 (依照加入順序)
+      const teamMonsters = myTeam.map(id => monsterData.find(m => m.id === id)).filter(Boolean);
+      const normalMonsters = filtered.filter(m => !myTeam.includes(m.id));
 
-      if (favMonsters.length > 0) {
-        favTitle.style.display = 'flex';
-        favListDiv.innerHTML = favMonsters.map(m => generateCardHtml(m, true)).join('');
+      if (myTeam.length > 0) {
+        teamTitle.style.display = 'flex';
+        teamListDiv.innerHTML = teamMonsters.map(m => generateCardHtml(m, true)).join('');
       } else {
-        favTitle.style.display = 'none';
-        favListDiv.innerHTML = '';
+        teamTitle.style.display = 'none';
+        teamListDiv.innerHTML = '';
       }
 
       if (normalMonsters.length > 0) {
         mainListDiv.innerHTML = normalMonsters.map(m => generateCardHtml(m, false)).join('');
-      } else if (favMonsters.length === 0) {
-        mainListDiv.innerHTML = '<div class="empty-prompt">查無資料，請嘗試更換關鍵字 (如: 會心, HP) 🍼</div>';
+      } else if (teamMonsters.length === 0) {
+        mainListDiv.innerHTML = '<div class="empty-prompt">查無資料，請嘗試更換關鍵字或篩選條件 🍼</div>';
       } else {
         mainListDiv.innerHTML = '';
       }
     }
 
-    function generateCardHtml(m, isPinned) {
+    function generateCardHtml(m, isInTeam) {
       let ownBadgeHtml = '';
       if (m.ownType === '力') ownBadgeHtml = '<span class="own-badge badge-power">包包：🔴 力型</span>';
       else if (m.ownType === '速') ownBadgeHtml = '<span class="own-badge badge-speed">包包：🔵 速型</span>';
       else if (m.ownType === '技') ownBadgeHtml = '<span class="own-badge badge-tech">包包：🟢 技型</span>';
       else ownBadgeHtml = '<span class="own-badge badge-none">不可收服</span>';
 
+      const isCoop = m.location.includes("共鬥");
+      const locTagClass = isCoop ? "info-tag loc-coop" : "info-tag loc";
+      const locPrefix = isCoop ? "✨" : "📍";
+      
+      const btnText = isInTeam ? "移出隊伍" : "入隊伍";
+
       return `
-        <div class="monster-card">
+        <div class="monster-card ${isInTeam ? 'team-card' : ''}">
           <div class="card-header">
             <div class="name-block">
               <span class="monster-name">${m.name}</span>
               ${ownBadgeHtml}
             </div>
-            <button class="pin-btn ${isPinned ? 'pinned' : ''}" onclick="togglePin('${m.id}')">★</button>
+            ${m.ownType !== '不可' ? `<button class="recruit-btn ${isInTeam ? 'in-team' : ''}" onclick="toggleTeam('${m.id}')">${btnText}</button>` : ''}
           </div>
           
           <div class="info-tags">
-            <span class="info-tag loc">📍 ${m.location}</span>
+            <span class="${locTagClass}">${locPrefix} ${m.location}</span>
             <span class="info-tag ride">🐾 ${m.ride}</span>
           </div>
 
@@ -498,18 +535,22 @@
       `;
     }
 
-    window.togglePin = function(id) {
-      if (favorites.includes(id)) {
-        favorites = favorites.filter(f => f !== id);
+    // 隊伍切換邏輯
+    window.toggleTeam = function(id) {
+      if (myTeam.includes(id)) {
+        myTeam = myTeam.filter(f => f !== id);
       } else {
-        favorites.push(id);
+        if (myTeam.length >= 6) {
+          showToast();
+          return;
+        }
+        myTeam.push(id);
       }
-      localStorage.setItem('mhst2_favs_sims', JSON.stringify(favorites));
+      localStorage.setItem('mhst2_team', JSON.stringify(myTeam));
       render();
     };
 
-    // --- 以下為補齊的事件監聽器代碼 ---
-
+    // 事件監聽器
     searchInput.addEventListener('input', (e) => {
       searchKeyword = e.target.value.trim();
       Array.from(geneFilters.children).forEach(el => el.classList.remove('active'));
@@ -517,21 +558,33 @@
     });
 
     clearSearchBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      searchKeyword = '';
+      searchInput.value = ''; searchKeyword = '';
       Array.from(geneFilters.children).forEach(el => el.classList.remove('active'));
       render();
+    });
+
+    // 處理共鬥與地圖過濾
+    locFilters.addEventListener('click', (e) => {
+      if (e.target.classList.contains('filter-tag')) {
+        const val = e.target.getAttribute('data-val');
+        if (activeLocType === val) {
+          activeLocType = '';
+          e.target.classList.remove('active');
+        } else {
+          Array.from(locFilters.children).forEach(el => el.classList.remove('active'));
+          activeLocType = val;
+          e.target.classList.add('active');
+        }
+        render();
+      }
     });
 
     geneFilters.addEventListener('click', (e) => {
       if (e.target.classList.contains('filter-tag')) {
         const val = e.target.getAttribute('data-val');
-        searchInput.value = val;
-        searchKeyword = val;
-        
+        searchInput.value = val; searchKeyword = val;
         Array.from(geneFilters.children).forEach(el => el.classList.remove('active'));
         e.target.classList.add('active');
-        
         render();
       }
     });
@@ -539,14 +592,8 @@
     enemyFilters.addEventListener('click', (e) => {
       if (e.target.classList.contains('filter-tag')) {
         const val = e.target.getAttribute('data-val');
-        if (activeEnemyType === val) {
-          activeEnemyType = '';
-          e.target.classList.remove('active');
-        } else {
-          Array.from(enemyFilters.children).forEach(el => el.classList.remove('active'));
-          activeEnemyType = val;
-          e.target.classList.add('active');
-        }
+        if (activeEnemyType === val) { activeEnemyType = ''; e.target.classList.remove('active'); } 
+        else { Array.from(enemyFilters.children).forEach(el => el.classList.remove('active')); activeEnemyType = val; e.target.classList.add('active'); }
         render();
       }
     });
@@ -554,14 +601,8 @@
     ownFilters.addEventListener('click', (e) => {
       if (e.target.classList.contains('filter-tag')) {
         const val = e.target.getAttribute('data-val');
-        if (activeOwnType === val) {
-          activeOwnType = '';
-          e.target.classList.remove('active');
-        } else {
-          Array.from(ownFilters.children).forEach(el => el.classList.remove('active'));
-          activeOwnType = val;
-          e.target.classList.add('active');
-        }
+        if (activeOwnType === val) { activeOwnType = ''; e.target.classList.remove('active'); } 
+        else { Array.from(ownFilters.children).forEach(el => el.classList.remove('active')); activeOwnType = val; e.target.classList.add('active'); }
         render();
       }
     });
